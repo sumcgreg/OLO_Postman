@@ -1,0 +1,280 @@
+{
+	"info": {
+		"_postman_id": "3e07d86f-f481-420d-88f3-0293091d1bb8",
+		"name": "OlO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "display json users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2b49b263-caa2-4089-bcd4-b4007f0c297e",
+						"exec": [
+							"",
+							"// Check response code",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"// Check response time",
+							"pm.test(\"Response time is less than 150ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(150);",
+							"});",
+							"// Validate title Of user 1 conatins specific text. ",
+							"pm.test(\"Check title of User\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData[1].title).to.contains(\"qui est esse\");",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"userId\": 111,\n        \"id\": 111,\n        \"title\": \"Changing this to english\",\n        \"body\": \"Changing the body to english also\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/posts",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"posts"
+					]
+				},
+				"description": "Tests the initial response codes"
+			},
+			"response": []
+		},
+		{
+			"name": "input users fro json",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "feb2a133-5521-4add-9fd8-d614fa87b116",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "39504bd5-9303-424a-8bdd-7af4d094a2e5",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"New User Added \",function () {",
+							"    console.log(\"Adding User \"+ (pm.iterationData.get(\"userId\")));",
+							"   var jsonData = pm.response.json();",
+							" ",
+							"    //pm.expect(jsonData.id).to.eql(pm.iterationData.get(\"id\"));",
+							"    pm.expect(jsonData.userId).to.eql(pm.iterationData.get(\"userId\"));",
+							"    pm.expect(jsonData.title).to.eql(pm.iterationData.get(\"title\"));",
+							"    pm.expect(jsonData.body).to.eql(pm.iterationData.get(\"body\"));",
+							" ",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"userId\": \"{{userId}}\",\n        \"id\": \"{{id}}\",\n        \"title\": \"{{title}}\",\n        \"body\": \"{{body}}\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/posts",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"posts"
+					]
+				},
+				"description": "Add a new userID and verify "
+			},
+			"response": []
+		},
+		{
+			"name": "edit user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9cfac616-e5b1-4d67-95af-1c4c63a26af5",
+						"exec": [
+							"// The following tests will result in 2 passed and 1 failure due to a defect",
+							"// Check response code",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"value of userId updated 1500 \",function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.userId).to.eql(1500);",
+							"   ",
+							"});",
+							"// Defect...We are not updating the id fields",
+							"pm.test(\"Value id has been updated to 150\", () => {",
+							"     var jsonData = pm.response.json();",
+							"  pm.expect(jsonData.id).to.eql(100);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userId\": 1500,\n    \"id\": 150,\n    \"title\": \"This is an update to the current users \",\n    \"body\": \"cupiditate quo est a modi nesciunt soluta\\nipsa voluptas error itaque dicta in\\nautem qui minus magnam et distinctio eum\\naccusamus ratione error aut\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/posts/100?id=10&userId=100",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"posts",
+						"100"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "10",
+							"description": "Id with in the USERId"
+						},
+						{
+							"key": "userId",
+							"value": "100"
+						}
+					]
+				},
+				"description": "Put test with 2 passed and 1 failed . Defect"
+			},
+			"response": []
+		},
+		{
+			"name": "delete user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1ae9e332-6d28-45d2-a870-b2f65e3e3459",
+						"exec": [
+							"// This test expects a failure, however the delete function is returning a success for non user ids ",
+							"",
+							"pm.test.skip(\"Status code is 404\", function () {",
+							" pm.expect.fail('This failed because we are returning status code 200 for any request ');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/posts/bxhxhbx",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"posts",
+						"bxhxhbx"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "How many records per id return",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7a8e1b9b-0b34-4aca-b6e9-dc4599add657",
+						"exec": [
+							"",
+							"pm.test(\"Correct amount of records return\", function (){",
+							"pm.expect(Object.keys(pm.response.json()).length).to.eql(5);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jsonplaceholder.typicode.com/comments?postId=100",
+					"protocol": "https",
+					"host": [
+						"jsonplaceholder",
+						"typicode",
+						"com"
+					],
+					"path": [
+						"comments"
+					],
+					"query": [
+						{
+							"key": "postId",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
